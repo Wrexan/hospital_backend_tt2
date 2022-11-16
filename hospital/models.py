@@ -16,9 +16,18 @@ class Location(models.Model):
 
 
 class Schedule(models.Model):
+    WEEK_DAYS = [
+        (1, 'Monday'),
+        (2, 'Tuesday'),
+        (3, 'Wednesday'),
+        (4, 'Thursday'),
+        (5, 'Friday'),
+        (6, 'Saturday'),
+        (7, 'Sunday'),
+    ]
     worker = models.ForeignKey(to=Worker, on_delete=models.CASCADE)
     location = models.ForeignKey(to=Location, on_delete=models.CASCADE)
-    week_day = models.PositiveSmallIntegerField(max_length=7)
+    week_day = models.PositiveSmallIntegerField(choices=WEEK_DAYS)
     time_start = models.TimeField(auto_now=False)
     time_end = models.TimeField(auto_now=False)
 
@@ -31,8 +40,7 @@ class Schedule(models.Model):
         verbose_name_plural = 'Working hours'
 
     def __str__(self):
-        week = ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
-        return f'{week[self.week_day]}: {self.time_start}-{self.time_end}'
+        return f'{self.week_day}: {self.time_start}-{self.time_end}'
 
 
 class Appointment(models.Model):

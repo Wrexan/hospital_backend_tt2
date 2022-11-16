@@ -4,15 +4,15 @@ from .models import Location, Schedule, Appointment
 
 
 class LocationViewSet(ModelViewSet):
-    queryset = Location.objects.all
+    queryset = Location.objects.all()
     serializer_class = LocationSerializer
 
 
 class ScheduleViewSet(ModelViewSet):
-    queryset = Schedule.objects.all
+    queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
 
 
 class AppointmentViewSet(ModelViewSet):
-    queryset = Appointment.objects.all
+    queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
