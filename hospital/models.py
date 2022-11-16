@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from workers.models import Worker
+from clients.models import Client
 
 
 class Location(models.Model):
@@ -14,7 +16,7 @@ class Location(models.Model):
 
 
 class Schedule(models.Model):
-    worker = models.ForeignKey(to=, on_delete=models.CASCADE)
+    worker = models.ForeignKey(to=Worker, on_delete=models.CASCADE)
     location = models.ForeignKey(to=Location, on_delete=models.CASCADE)
     week_day = models.PositiveSmallIntegerField(max_length=7)
     time_start = models.TimeField(auto_now=False)
@@ -35,8 +37,8 @@ class Schedule(models.Model):
 
 class Appointment(models.Model):
     name = models.CharField(max_length=64)
-    client = models.ForeignKey(to=, on_delete=models.CASCADE)
-    worker
+    client = models.ForeignKey(to=Client, on_delete=models.CASCADE)
+    worker = models.ForeignKey(to=Worker, on_delete=models.CASCADE)
     date = models.DateField(auto_now=False)
     time_start = models.TimeField(auto_now=False)
     time_end = models.TimeField(auto_now=False)

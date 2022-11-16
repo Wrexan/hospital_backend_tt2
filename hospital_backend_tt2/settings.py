@@ -40,9 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'hospital',
     'clients',
-    'locations',
-    'schedules',
-    'managerial_staff',
+    'staff',
     'workers',
 ]
 
