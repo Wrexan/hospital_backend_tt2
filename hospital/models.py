@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Q
 
 from workers.models import Worker
-from clients.models import Client
+from users.models import User
 
 
 class Location(models.Model):
@@ -51,7 +51,7 @@ class Schedule(models.Model):
 
         worker_schedules = day_schedules.filter(worker=self.worker)
         if worker_schedules.exists():
-            busy_worker_name = worker_schedules.first().location.name
+            busy_worker_name = worker_schedules.first().worker.name
             busy_worker_time = ', '.join(f'{_time.time_start} {_time.time_end}'
                                          for _time in worker_schedules.order_by('time_start'))
             raise ValidationError(f'Worker {busy_worker_name} is busy for: {busy_worker_time}')
@@ -66,7 +66,7 @@ class Schedule(models.Model):
 
 class Appointment(models.Model):
     name = models.CharField(max_length=64)
-    client = models.ForeignKey(to=Client, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     worker = models.ForeignKey(to=Worker, on_delete=models.CASCADE)
     date = models.DateField(auto_now=False)
     time_start = models.TimeField(auto_now=False)
