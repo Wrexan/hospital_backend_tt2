@@ -17,13 +17,21 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from hospital.views import LocationViewSet, ScheduleViewSet, AppointmentViewSet
+from clients.views import ClientViewSet
+from staff.views import AdministratorViewSet, ManagerViewSet
+from workers.views import WorkerViewSet
 
 router = DefaultRouter()
-router.register('locations', LocationViewSet)
-router.register('schedules', ScheduleViewSet)
-router.register('appointments', AppointmentViewSet)
+router.register('locations', LocationViewSet, basename='location')
+router.register('schedules', ScheduleViewSet, basename='schedule')
+router.register('appointments', AppointmentViewSet, basename='appointment')
+router.register('clients', ClientViewSet, basename='client')
+router.register('administrators', AdministratorViewSet, basename='administrator')
+router.register('managers', ManagerViewSet, basename='manager')
+router.register('workers', WorkerViewSet, basename='worker')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
     path('api/', include(router.urls)),
 ]

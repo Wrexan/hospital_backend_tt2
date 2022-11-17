@@ -57,8 +57,8 @@ class Schedule(models.Model):
             raise ValidationError(f'Worker {busy_worker_name} is busy for: {busy_worker_time}')
 
     class Meta:
-        verbose_name = 'Working hours'
-        verbose_name_plural = 'Working hours'
+        verbose_name = 'Schedule'
+        verbose_name_plural = 'Schedules'
 
     def __str__(self):
         return f'{self.week_day}: {self.time_start}-{self.time_end}'
