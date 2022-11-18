@@ -2,7 +2,9 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
 
-from hospital.models import Location
+from hospital.models import Location, Schedule, Appointment
+
+from workers.models import Worker
 
 clients = {
     'name': 'clients',
@@ -34,25 +36,20 @@ admins = {
 
 managers = {
     'name': 'managers',
-    'permissions': (
-        'worker.list_workers',
-        'worker.view_worker',
-        'worker.add_worker',
-        'worker.change_worker',
-        'worker.delete_worker',
-
-        'schedule.list_schedules',
-        'schedule.view_schedule',
-        'schedule.add_schedule',
-        'schedule.change_schedule',
-        'schedule.delete_schedule',
-
-        'location.list_locations',
-        'location.view_location',
-        'location.add_location',
-        'location.change_location',
-        'location.delete_location',
-    )
+    'permissions': {
+        Worker:
+            (
+                'list_workers', 'view_worker', 'add_worker', 'change_worker', 'delete_worker',
+            ),
+        Schedule:
+            (
+                'list_schedules', 'view_schedule', 'add_schedule', 'change_schedule', 'delete_schedule',
+            ),
+        Location:
+            (
+                'list_locations', 'view_location', 'add_location', 'change_location', 'delete_location',
+            )
+    }
 }
 
 
