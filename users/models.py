@@ -14,6 +14,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+        default_permissions = ()
 
     def __str__(self):
         return self.username
