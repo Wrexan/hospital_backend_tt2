@@ -1,8 +1,15 @@
 from django.contrib.auth.models import AbstractUser, Group
+from django.db import OperationalError
 
 
 class User(AbstractUser):
-    groups = Group.objects.get(name='clients')
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        try:
+            client_group, _ = Group.objects.get_or_create(name='clients')
+            self.groups.add(client_group)
+        except OperationalError as err:
+            print(err)
 
     class Meta:
         verbose_name = 'User'

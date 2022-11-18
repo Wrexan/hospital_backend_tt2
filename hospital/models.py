@@ -71,3 +71,7 @@ class Appointment(models.Model):
     date = models.DateField(auto_now=False)
     time_start = models.TimeField(auto_now=False)
     time_end = models.TimeField(auto_now=False)
+
+    class Meta:
+        verbose_name = 'Appointment'
+        verbose_name_plural = 'Appointments'
