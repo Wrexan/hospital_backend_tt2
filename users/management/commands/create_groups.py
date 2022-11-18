@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
 
 from hospital.models import Location, Schedule, Appointment
+from users.models import User
 
 from workers.models import Worker
 
@@ -19,36 +20,20 @@ clients = {
 
 admins = {
     'name': 'admins',
-    'permissions': (
-        'worker.list_workers',
-        'worker.view_worker',
-
-        'user.list_users',
-        'user.view_user',
-
-        'appointment.list_appointments',
-        'appointment.view_appointment',
-        'appointment.add_appointment',
-        'appointment.change_appointment',
-        'appointment.delete_appointment',
-    )
+    'permissions': {
+        Worker: ('worker.list_workers', 'worker.view_worker'),
+        User: ('user.list_users', 'user.view_user',),
+        Appointment: ('list_appointments', 'view_appointment', 'add_appointment'
+                      , 'change_appointment', 'delete_appointment')
+    }
 }
 
 managers = {
     'name': 'managers',
     'permissions': {
-        Worker:
-            (
-                'list_workers', 'view_worker', 'add_worker', 'change_worker', 'delete_worker',
-            ),
-        Schedule:
-            (
-                'list_schedules', 'view_schedule', 'add_schedule', 'change_schedule', 'delete_schedule',
-            ),
-        Location:
-            (
-                'list_locations', 'view_location', 'add_location', 'change_location', 'delete_location',
-            )
+        Worker: ('list_workers', 'view_worker', 'add_worker', 'change_worker', 'delete_worker'),
+        Schedule: ('list_schedules', 'view_schedule', 'add_schedule', 'change_schedule', 'delete_schedule'),
+        Location: ('list_locations', 'view_location', 'add_location', 'change_location', 'delete_location')
     }
 }
 
