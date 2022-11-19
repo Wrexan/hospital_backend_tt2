@@ -21,11 +21,11 @@ from users.views import UserViewSet
 from workers.views import WorkerViewSet
 
 router = DefaultRouter()
-router.register('locations', LocationViewSet, basename='location')
-router.register('schedules', ScheduleViewSet, basename='schedule')
-router.register('appointments', AppointmentViewSet, basename='appointment')
-router.register('users', UserViewSet, basename='user')
-router.register('workers', WorkerViewSet, basename='worker')
+router.register('locations', LocationViewSet, basename='locations')
+router.register('schedules', ScheduleViewSet, basename='schedules')
+router.register('appointments', AppointmentViewSet, basename='appointments')
+router.register('users', UserViewSet, basename='users')
+router.register('workers', WorkerViewSet, basename='workers')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

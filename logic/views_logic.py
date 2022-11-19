@@ -1,4 +1,4 @@
-from rest_framework.exceptions import PermissionDenied, NotFound
+from rest_framework.exceptions import PermissionDenied
 
 
 def get_model_by_id_or_all(model, request, is_auth=True):
