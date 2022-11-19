@@ -1,3 +1,4 @@
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.viewsets import ModelViewSet
 from .serializers import LocationSerializer, ScheduleSerializer, AppointmentSerializer
@@ -8,6 +9,7 @@ from logic.views_logic import get_model_by_id_or_all
 class LocationViewSet(ModelViewSet):
     serializer_class = LocationSerializer
 
+    # @action(detail=False)
     def get_queryset(self):
         if self.request.user.has_perms([
             'hospital.list_locations',
@@ -16,8 +18,18 @@ class LocationViewSet(ModelViewSet):
             # 'location.change_location',
             # 'location.delete_location',
         ]):
-            print(f'OK - location.list_locations')
-            return get_model_by_id_or_all(Location, self.request)
+            return get_model_by_id_or_all(model=Location, request=self.request)
+        raise PermissionDenied()
+
+    @action(detail=True, methods=['post'])
+    def add(self, request):
+        if self.request.user.has_perm('hospital.add_location'):
+            print(f'OK - hospital.add_location')
+            serializer = self.serializer_class(self.request.query, many=True)
+            if serializer.is_valid(raise_exception=True):
+                Location.objects.create(self.request.query)
+            #     print(f'OK - created')
+            # return get_model_by_id_or_all(model=Location, request=self.request)
         raise PermissionDenied()
 
 

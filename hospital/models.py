@@ -7,7 +7,7 @@ from users.models import User
 
 
 class Location(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
 
     class Meta:
         verbose_name = 'Location'
