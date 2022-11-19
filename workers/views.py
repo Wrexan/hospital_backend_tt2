@@ -15,7 +15,11 @@ class WorkerViewSet(ModelViewSet):
 
     @permissions_only({'workers.list_workers'})
     def get_queryset(self):
-        return Worker.objects.all()
+        if 'speciality' in self.request.query_params:
+            return Worker.objects\
+                .filter(speciality=self.request.query_params.get('speciality'))\
+                .order_by('first_name')
+        return Worker.objects.all().order_by('first_name')
 
     @permissions_only({'workers.view_worker'})
     def get_object(self, **kwargs):
