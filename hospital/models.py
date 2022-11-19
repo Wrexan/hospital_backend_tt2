@@ -37,19 +37,19 @@ class Schedule(models.Model):
         if self.time_start >= self.time_end:
             raise ValidationError('Schedule cannot end before start')
 
-        this_day_schedules = Schedule.objects \
+        this_day_conflict_schedules = Schedule.objects \
             .filter(week_day=self.week_day) \
             .filter(Q(time_start__lte=self.time_start) & Q(time_end__gte=self.time_start) |
                     Q(time_start__lte=self.time_end) & Q(time_end__gte=self.time_end))
 
-        location_schedules = this_day_schedules.filter(location=self.location)
+        location_schedules = this_day_conflict_schedules.filter(location=self.location)
         if location_schedules.exists():
             busy_location_name = location_schedules.first().location.name
             busy_location_time = ', '.join(f'{_time.time_start} {_time.time_end}'
                                            for _time in location_schedules.order_by('time_start'))
             raise ValidationError(f'Location {busy_location_name} is busy for: {busy_location_time}')
 
-        worker_schedules = this_day_schedules.filter(worker=self.worker)
+        worker_schedules = this_day_conflict_schedules.filter(worker=self.worker)
         if worker_schedules.exists():
             busy_worker_name = worker_schedules.first().worker.name
             busy_worker_time = ', '.join(f'{_time.time_start} {_time.time_end}'
@@ -79,15 +79,22 @@ class Appointment(models.Model):
             raise ValidationError('Appointment cannot end before start')
 
         week_day = self.date.isoweekday()
-        this_day_appointments = Schedule.objects \
+        this_day_suitable_schedule = Schedule.objects \
             .filter(week_day=week_day) \
-            .filter(Q(time_start__lte=self.time_start) & Q(time_end__gte=self.time_start) |
-                    Q(time_start__lte=self.time_end) & Q(time_end__gte=self.time_end))
+            .filter(worker=self.worker) \
+            .filter(Q(time_start__lte=self.time_start) & Q(time_end__gte=self.time_end))
+        if not this_day_suitable_schedule.exists():
+            raise ValidationError(f'Not proper working time for {self.worker}')
 
-        this_day_appointments = Schedule.objects \
-            .filter(week_day=week_day) \
+        this_date_conflicting_appointments = Appointment.objects \
+            .filter(date=self.date) \
+            .filter(worker=self.worker) \
             .filter(Q(time_start__lte=self.time_start) & Q(time_end__gte=self.time_start) |
                     Q(time_start__lte=self.time_end) & Q(time_end__gte=self.time_end))
+        if not this_date_conflicting_appointments.exists():
+            busy_worker_time = ', '.join(f'{_time.time_start} {_time.time_end}'
+                                         for _time in this_date_conflicting_appointments.order_by('time_start'))
+            raise ValidationError(f'Worker {self.worker} is busy for: {busy_worker_time}')
 
     class Meta:
         verbose_name = 'Appointment'
