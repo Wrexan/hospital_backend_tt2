@@ -1,6 +1,17 @@
 from rest_framework.exceptions import PermissionDenied
 
 
+def permissions_only(permissions: set):
+    def wrapper(func):
+        def view_method(view, *args, **kwargs):
+            for perm in permissions:
+                if not view.request.user.has_perm(perm):
+                    raise PermissionDenied()
+            return func(view, *args, **kwargs)
+        return view_method
+    return wrapper
+
+
 def get_model_by_id_or_all(model, request, is_auth=True):
     if is_auth and not request.user.is_authenticated:
         raise PermissionDenied()
