@@ -1,6 +1,7 @@
 from django.http import Http404
 from rest_framework import status
 from rest_framework.exceptions import NotFound
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
@@ -19,7 +20,7 @@ class LocationViewSet(ModelViewSet):
 
     @permissions_only({'hospital.view_location'})
     def get_object(self, **kwargs):
-        return Location.objects.get(id=self.kwargs['pk'])
+        return get_object_or_404(Location, id=self.kwargs['pk'])
 
     @permissions_only({'hospital.add_location'})
     def create(self, request, *args, **kwargs):
@@ -54,7 +55,7 @@ class ScheduleViewSet(ModelViewSet):
 
     @permissions_only({'hospital.view_schedule'})
     def get_object(self, **kwargs):
-        return Schedule.objects.get(id=self.kwargs['pk'])
+        return get_object_or_404(Schedule, id=self.kwargs['pk'])
 
     @permissions_only({'hospital.add_schedule'})
     def create(self, request, *args, **kwargs):
@@ -89,7 +90,7 @@ class AppointmentViewSet(ModelViewSet):
 
     @permissions_only({'hospital.view_appointment'})
     def get_object(self, **kwargs):
-        return Appointment.objects.get(id=self.kwargs['pk'])
+        return get_object_or_404(Appointment, id=self.kwargs['pk'])
 
     @permissions_only({'hospital.add_appointment'})
     def create(self, request, *args, **kwargs):

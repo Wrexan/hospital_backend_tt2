@@ -1,3 +1,4 @@
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from .serializers import UserSerializer
@@ -15,5 +16,5 @@ class UserViewSet(ReadOnlyModelViewSet):
 
     @permissions_only({'user.view_users'})
     def get_object(self, **kwargs):
-        return User.objects.get(id=self.kwargs['pk'])
+        return get_object_or_404(User, id=self.kwargs['pk'])
 

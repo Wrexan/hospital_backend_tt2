@@ -16,7 +16,6 @@ class WorkerSerializer(ModelSerializer):
 
     def get_schedule_times(self, obj):
         if not self.week_day:
-            # self.Meta.fields = ['first_name', 'last_name', 'speciality']
             return None
         return Schedule.objects \
             .filter(worker_id=obj.pk,

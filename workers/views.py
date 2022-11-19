@@ -2,6 +2,7 @@ from django.http import Http404
 from django.utils.dateparse import parse_date
 from rest_framework import status
 from rest_framework.exceptions import NotFound
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -29,8 +30,8 @@ class WorkerViewSet(ModelViewSet):
             date = parse_date(self.request.query_params.get('date'))
             week_day = date.isoweekday()
             self.serializer_class.week_day = week_day
-            return Worker.objects.get(id=self.kwargs['pk'])
-        return Worker.objects.get(id=self.kwargs['pk'])
+            return get_object_or_404(Worker, id=self.kwargs['pk'])
+        return get_object_or_404(Worker, id=self.kwargs['pk'])
 
     @permissions_only({'workers.add_worker'})
     def create(self, request, *args, **kwargs):
