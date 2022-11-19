@@ -37,19 +37,19 @@ class Schedule(models.Model):
         if self.time_start >= self.time_end:
             raise ValidationError('Schedule cannot end before start')
 
-        day_schedules = Schedule.objects \
+        this_day_schedules = Schedule.objects \
             .filter(week_day=self.week_day) \
             .filter(Q(time_start__lte=self.time_start) & Q(time_end__gte=self.time_start) |
                     Q(time_start__lte=self.time_end) & Q(time_end__gte=self.time_end))
 
-        location_schedules = day_schedules.filter(location=self.location)
+        location_schedules = this_day_schedules.filter(location=self.location)
         if location_schedules.exists():
             busy_location_name = location_schedules.first().location.name
             busy_location_time = ', '.join(f'{_time.time_start} {_time.time_end}'
                                            for _time in location_schedules.order_by('time_start'))
             raise ValidationError(f'Location {busy_location_name} is busy for: {busy_location_time}')
 
-        worker_schedules = day_schedules.filter(worker=self.worker)
+        worker_schedules = this_day_schedules.filter(worker=self.worker)
         if worker_schedules.exists():
             busy_worker_name = worker_schedules.first().worker.name
             busy_worker_time = ', '.join(f'{_time.time_start} {_time.time_end}'
@@ -74,6 +74,26 @@ class Appointment(models.Model):
     time_start = models.TimeField(auto_now=False)
     time_end = models.TimeField(auto_now=False)
 
+    def clean(self):
+        if self.time_start >= self.time_end:
+            raise ValidationError('Appointment cannot end before start')
+
+        week_day = self.date.isoweekday()
+        this_day_appointments = Schedule.objects \
+            .filter(week_day=week_day) \
+            .filter(Q(time_start__lte=self.time_start) & Q(time_end__gte=self.time_start) |
+                    Q(time_start__lte=self.time_end) & Q(time_end__gte=self.time_end))
+
+        this_day_appointments = Schedule.objects \
+            .filter(week_day=week_day) \
+            .filter(Q(time_start__lte=self.time_start) & Q(time_end__gte=self.time_start) |
+                    Q(time_start__lte=self.time_end) & Q(time_end__gte=self.time_end))
+
     class Meta:
         verbose_name = 'Appointment'
         verbose_name_plural = 'Appointments'
+
+    def __str__(self):
+        return f'[{self.name}] {self.worker.first_name} {self.worker.last_name} <=> ' \
+               f'{self.user.username} {self.date}: ' \
+               f'{self.time_start}-{self.time_end}'
