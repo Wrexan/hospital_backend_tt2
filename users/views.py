@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -10,11 +11,11 @@ class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
 
-    @permissions_only({'user.list_users'})
+    @permissions_only({'users.list_users'})
     def get_queryset(self):
-        return User.objects.all()
+        return User.objects.all().exclude(is_superuser=True)
 
-    @permissions_only({'user.view_users'})
+    @permissions_only({'users.view_users'})
     def get_object(self, **kwargs):
-        return get_object_or_404(User, id=self.kwargs['pk'])
+        user = get_object_or_404(User, ~Q(is_superuser=True), id=self.kwargs['pk'])
 
