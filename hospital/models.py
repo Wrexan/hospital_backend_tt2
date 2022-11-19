@@ -61,7 +61,9 @@ class Schedule(models.Model):
         verbose_name_plural = 'Schedules'
 
     def __str__(self):
-        return f'{self.week_day}: {self.time_start}-{self.time_end}'
+        return f'[{self.worker.speciality}] {self.worker.first_name} {self.worker.last_name} => ' \
+               f'{self.WEEK_DAYS[self.week_day - 1][1]}: ' \
+               f'{self.time_start}-{self.time_end}'
 
 
 class Appointment(models.Model):
