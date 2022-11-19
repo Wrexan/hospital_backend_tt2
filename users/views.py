@@ -1,7 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from .serializers import UserSerializer
-from logic.views_logic import get_model_by_id_or_all, get_self_user_info
+from logic.views_logic import permissions_only
 from .models import User
 
 
@@ -9,8 +9,11 @@ class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
 
+    @permissions_only({'user.list_users'})
     def get_queryset(self):
-        if self.request.user.has_perm('user.list_users'):
-            return get_model_by_id_or_all(User, self.request)
-        return get_self_user_info(User, self.request)
+        return User.objects.all()
+
+    @permissions_only({'user.view_users'})
+    def get_object(self, **kwargs):
+        return User.objects.get(id=self.kwargs['pk'])
 
