@@ -1,15 +1,21 @@
 ###About 
 This is DRF backend API made as test task from test_task.txt
 ###Application setup order 
-Create sqlite database and apply migrations  
-+ `python manage.py migrate`  
++ Create sqlite database and apply migrations:  
+`python manage.py migrate`  
 
-Create permission groups: __clients, administrators, managers__. 
++ Create permission groups: __clients, administrators, managers__. 
 All users will have client's permissions.  
-+ `python manage.py create_groups`  
+`python manage.py create_groups`  
 
-Create superuser __admin:admin__  
-+ `python manage.py create_superuser`  
++ Create staff:  
+`python manage.py create_staff` will create default users:
+  - superuser __admin:admin__
+  - manager __manager:123__
+  - administrator __administrator:123__
+
++ Start server:  
+`python manage.py runserver`
 
 ###API
 `http://127.0.0.1:8000/api`  
