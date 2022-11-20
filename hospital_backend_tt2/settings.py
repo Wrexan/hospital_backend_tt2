@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'hospital',
     'users',
     'workers',
@@ -86,12 +87,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'NON_FIELD_ERRORS_KEY': 'Invalid value'
-    ,
 }
 
 if DEBUG:
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.SessionAuthentication')
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

@@ -18,4 +18,3 @@ class UserViewSet(ReadOnlyModelViewSet):
     @permissions_only({'users.view_user'})
     def get_object(self, **kwargs):
         return get_object_or_404(User, ~Q(is_superuser=True), id=self.kwargs['pk'])
-

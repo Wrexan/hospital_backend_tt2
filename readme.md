@@ -1,3 +1,5 @@
+###About 
+This is DRF backend API made as test task from test_task.txt
 ###Application setup order 
 Create sqlite database and apply migrations  
 + `python manage.py migrate`  
