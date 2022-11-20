@@ -68,7 +68,7 @@ class Schedule(models.Model):
 
 class Appointment(models.Model):
     name = models.CharField(max_length=64)
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, limit_choices_to={'is_superuser': False})
     worker = models.ForeignKey(to=Worker, on_delete=models.CASCADE)
     date = models.DateField(auto_now=False)
     time_start = models.TimeField(auto_now=False)

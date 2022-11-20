@@ -15,7 +15,7 @@ class UserViewSet(ReadOnlyModelViewSet):
     def get_queryset(self):
         return User.objects.all().exclude(is_superuser=True)
 
-    @permissions_only({'users.view_users'})
+    @permissions_only({'users.view_user'})
     def get_object(self, **kwargs):
-        user = get_object_or_404(User, ~Q(is_superuser=True), id=self.kwargs['pk'])
+        return get_object_or_404(User, ~Q(is_superuser=True), id=self.kwargs['pk'])
 
