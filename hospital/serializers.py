@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.utils.datetime_safe import datetime
 from rest_framework.serializers import ModelSerializer, ValidationError
 from .models import Location, Schedule, Appointment
 
@@ -43,6 +44,10 @@ class AppointmentSerializer(ModelSerializer):
         if attrs['time_start'] >= attrs['time_end']:
             raise ValidationError('Appointment cannot end before start')
 
+        if datetime.now() >= datetime.combine(attrs['date'], attrs['time_start']):
+            raise ValidationError('Appointment cannot start in the past')
+
+        # get appropriate schedule
         week_day = attrs['date'].isoweekday()
         this_day_suitable_schedule = Schedule.objects \
             .filter(week_day=week_day) \
@@ -51,11 +56,18 @@ class AppointmentSerializer(ModelSerializer):
         if not this_day_suitable_schedule.exists():
             raise ValidationError(f"Not proper working time for {attrs['worker']}")
 
+        # get appointments conflicting by time
         this_date_conflicting_appointments = Appointment.objects \
             .filter(date=attrs['date']) \
             .filter(worker=attrs['worker']) \
-            .filter(Q(time_start__lte=attrs['time_start']) & Q(time_end__gte=attrs['time_start']) |
-                    Q(time_start__lte=attrs['time_end']) & Q(time_end__gte=attrs['time_end']))
+            .filter(Q(time_start__lte=attrs['time_start']) & Q(time_end__gt=attrs['time_start']) |
+                    Q(time_start__lt=attrs['time_end']) & Q(time_end__gte=attrs['time_end']))
+
+        # if PUT, removing this appointment from conflict list to be able to save at same time period
+        if self.instance:
+            this_date_conflicting_appointments = this_date_conflicting_appointments.exclude(pk=self.instance.id)
+
+        # returning conflicting appointments
         if this_date_conflicting_appointments.exists():
             busy_worker_time = ', '.join(f'{_time.time_start} {_time.time_end}'
                                          for _time in this_date_conflicting_appointments.order_by('time_start'))
